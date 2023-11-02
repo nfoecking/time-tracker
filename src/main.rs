@@ -39,7 +39,7 @@ fn main() {
             init::init_command(time_repo);
         },
         Commands::Start { timestamp } => {
-            start::start_command(timestamp);
+            start::start_command(time_repo, timestamp);
         },
         Commands::End { timestamp } => {
             println!("'myapp start' was used, ts is: {timestamp:?}")
