@@ -173,6 +173,7 @@ impl TimeRepository for SqliteTimeRepository {
 
 impl From<Error> for TimeRepositoryError {
     fn from(_inner: Error) -> Self {
+        // TODO implement a valid mapping
         TimeRepositoryError::Connection
     }
 }
