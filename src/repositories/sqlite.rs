@@ -2,7 +2,7 @@ use chrono::{DateTime, Days, NaiveDate, Utc};
 use rusqlite::{params, types::Null, Connection, Error};
 
 use crate::domain::{
-    models::{Tracking, TrackingMonthAggregation},
+    models::{Tracking, TrackingMonthAggregation, TrackingYearAggregation},
     repositories::{TimeRepository, TimeRepositoryError},
 };
 
@@ -127,6 +127,33 @@ impl TimeRepository for SqliteTimeRepository {
         let agg_iter = stmt.query_map([ts], |row| {
             Ok(TrackingMonthAggregation {
                 date: row.get(0)?,
+                time_seconds: row.get(1)?,
+            })
+        })?;
+
+        let mut aggs = Vec::new();
+
+        for agg in agg_iter {
+            match agg {
+                Ok(t) => aggs.push(t),
+                Err(e) => return Err(e.into()),
+            };
+        }
+
+        Ok(aggs)
+    }
+
+    fn get_aggregation_for_year(
+        &self,
+        ts: &DateTime<Utc>,
+    ) -> Result<Vec<TrackingYearAggregation>, TimeRepositoryError> {
+        let mut stmt = self.connection.prepare(
+            "SELECT DATE(start_ts, 'start of month'), SUM(time_seconds) FROM times
+	            WHERE DATE(start_ts) >= DATE(?1,'start of year') and DATE(start_ts) <= DATE(?1, 'start of year', '+1 year', '-1 day')
+	                GROUP BY DATE(start_ts, 'start of month') ORDER BY DATE(start_ts, 'start of month')")?;
+        let agg_iter = stmt.query_map([ts], |row| {
+            Ok(TrackingYearAggregation {
+                month: row.get(0)?,
                 time_seconds: row.get(1)?,
             })
         })?;

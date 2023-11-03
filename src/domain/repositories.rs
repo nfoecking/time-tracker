@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc, NaiveDate};
 
-use super::models::{Tracking, TrackingMonthAggregation};
+use super::models::{Tracking, TrackingMonthAggregation, TrackingYearAggregation};
 
 pub trait TimeRepository {
     fn init_repository(&self) -> Result<(), TimeRepositoryError>;
@@ -9,6 +9,7 @@ pub trait TimeRepository {
     fn end_tracking(&self, id: u64, ts: &DateTime<Utc>, comment: &Option<String>, time_seconds: u64) -> Result<(), TimeRepositoryError>;
     fn get_trackings_of_date(&self, date: NaiveDate) -> Result<Vec<Tracking>, TimeRepositoryError>;
     fn get_aggregation_for_month(&self, ts: &DateTime<Utc>) -> Result<Vec<TrackingMonthAggregation>, TimeRepositoryError>;
+    fn get_aggregation_for_year(&self, ts: &DateTime<Utc>) -> Result<Vec<TrackingYearAggregation>, TimeRepositoryError>;
 }
 
 #[derive(Debug)]

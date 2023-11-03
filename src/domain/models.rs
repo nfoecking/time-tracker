@@ -12,3 +12,8 @@ pub struct TrackingMonthAggregation {
     pub date: NaiveDate,
     pub time_seconds: u64
 }
+
+pub struct TrackingYearAggregation {
+    pub month: NaiveDate,
+    pub time_seconds: u64
+}

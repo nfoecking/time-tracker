@@ -19,6 +19,11 @@ pub fn format_date(date: &NaiveDate) -> String {
     date.format("%F").to_string()
 }
 
+pub fn format_month(date_first_of_month: &NaiveDate) -> String {
+    date_first_of_month.format("%Y-%m").to_string()
+}
+
+
 pub fn format_duration(d: Duration) -> String {
     let total_seconds = d.num_seconds();
     let seconds = total_seconds % 60;
