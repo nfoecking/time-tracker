@@ -17,27 +17,47 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
+    /// Initialize the underlying database
     Init,
+    /// Start a new tracking session
     Start {
-        #[arg(long, short)]
+        /// Timestamp in the format 2023-01-02T07:09 which is used as the start-ts of the tracking session. 
+        /// Defaults to the current timestamp.
+        #[arg(long, short, verbatim_doc_comment)]
         timestamp: Option<String>,
     },
+    /// Stop the active tracking session
     End {
-        #[arg(long, short)]
+        /// Timestamp in the format 2023-01-02T07:09 which is used as the end-ts of the tracking session.
+        /// Defaults to the current timestamp.
+        #[arg(long, short, verbatim_doc_comment)]
         timestamp: Option<String>,
+        /// Free-text comment for the current tracking session.
         #[arg(long, short)]
         comment: Option<String>,
     },
+    /// Summary of the daily tracking sessions
     Day {
-        #[arg(long, short)]
+        /// Timestamp in the format 2023-01-02T07:09.
+        /// The day-component of the timestamp is used to filter the tracking sessions.
+        /// Defaults to the current timestamp.
+        #[arg(long, short, verbatim_doc_comment)]
         timestamp: Option<String>,
     },
+    /// Summary of the monthly tracking sessions
     Month {
-        #[arg(long, short)]
+        /// Timestamp in the format 2023-01-02T07:09.
+        /// The month-component of the timestamp is used to filter the tracking sessions.
+        /// Defaults to the current timestamp.
+        #[arg(long, short, verbatim_doc_comment)]
         timestamp: Option<String>,
     },
+    /// Summary of the yearly tracking sessions
     Year {
-        #[arg(long, short)]
+        /// Timestamp in the format 2023-01-02T07:09.
+        /// The year-component of the timestamp is used to filter the tracking sessions.
+        /// Defaults to the current timestamp.
+        #[arg(long, short, verbatim_doc_comment)]
         timestamp: Option<String>,
     }
 }
