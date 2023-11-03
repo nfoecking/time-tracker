@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, NaiveDate, Days};
 use rusqlite::{params, types::Null, Connection, Error};
 
 use crate::domain::{
@@ -84,6 +84,34 @@ impl TimeRepository for SqliteTimeRepository {
         )?;
 
         Ok(())
+    }
+
+    fn get_trackings_of_date(&self, date: NaiveDate)-> Result<Vec<Tracking>, TimeRepositoryError>{
+        let next_date = date.checked_add_days(Days::new(1)).unwrap_or(date);
+        let mut stmt = self.connection.prepare(
+            "SELECT id, comment, start_ts, end_ts, time_seconds FROM times WHERE start_ts >= ?1 and start_ts < ?2",
+        )?;
+        let tracking_iter = stmt.query_map([date, next_date], |row| {
+            Ok(Tracking {
+                id: row.get(0)?,
+                comment: row.get(1)?,
+                start_ts: row.get(2)?,
+                end_ts: row.get(3)?,
+                time_seconds: row.get(4)?,
+            })
+        })?;
+
+        let mut trackings = Vec::new();
+
+        for tracking in tracking_iter {
+            match tracking {
+                Ok(t) => trackings.push(t),
+                Err(e) => return Err(e.into()),
+            };
+        }
+
+        Ok(trackings)
+
     }
 }
 

@@ -1,11 +1,11 @@
 use clap::{Parser, Subcommand};
-use commands::{start, init, end};
+use commands::{end, init, start, day};
 use repositories::factory;
 
 mod commands;
 mod domain;
-mod repositories;
 mod helper;
+mod repositories;
 
 #[derive(Debug, Parser)]
 #[command(name = "time-tracker")]
@@ -27,9 +27,12 @@ enum Commands {
         timestamp: Option<String>,
         #[arg(long, short)]
         comment: Option<String>,
-    }
+    },
+    Day {
+        #[arg(long, short)]
+        timestamp: Option<String>,
+    },
 }
-
 
 fn main() {
     let time_repo = factory::get_time_repository().unwrap();
@@ -38,12 +41,15 @@ fn main() {
     match &cli.command {
         Commands::Init => {
             init::init_command(time_repo);
-        },
+        }
         Commands::Start { timestamp } => {
             start::start_command(time_repo, timestamp);
-        },
+        }
         Commands::End { timestamp, comment } => {
             end::end_command(time_repo, timestamp, comment);
+        }
+        Commands::Day { timestamp } => {
+            day::day_command(time_repo, timestamp)
         }
     }
 }
