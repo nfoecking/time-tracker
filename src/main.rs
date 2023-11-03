@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use commands::{end, init, start, day};
+use commands::{end, init, start, day, month};
 use repositories::factory;
 
 mod commands;
@@ -32,6 +32,10 @@ enum Commands {
         #[arg(long, short)]
         timestamp: Option<String>,
     },
+    Month {
+        #[arg(long, short)]
+        timestamp: Option<String>,
+    }
 }
 
 fn main() {
@@ -50,6 +54,9 @@ fn main() {
         }
         Commands::Day { timestamp } => {
             day::day_command(time_repo, timestamp)
+        }
+        Commands::Month { timestamp } => {
+            month::month_command(time_repo, timestamp)
         }
     }
 }

@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, NaiveDate};
 
 pub struct Tracking {
     pub start_ts: DateTime<Utc>,
@@ -6,4 +6,9 @@ pub struct Tracking {
     pub comment: Option<String>,
     pub time_seconds: u64,
     pub id: u64
+}
+
+pub struct TrackingMonthAggregation {
+    pub date: NaiveDate,
+    pub time_seconds: u64
 }

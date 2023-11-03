@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc, NaiveDateTime, LocalResult, TimeZone, Duration};
+use chrono::{DateTime, Utc, NaiveDateTime, LocalResult, TimeZone, Duration, NaiveDate};
 
 pub fn parse_ts(date_str: &str) -> Option<DateTime<Utc>>{
     let naive_dt = NaiveDateTime::parse_from_str(date_str, "%FT%R").ok()?;
@@ -13,6 +13,10 @@ pub fn format_ts(ts: &Option<DateTime<Utc>>) -> String {
         None => String::from("None"),
         Some(v) => v.format("%Y-%m-%d %H:%M:%S").to_string()
     }
+}
+
+pub fn format_date(date: &NaiveDate) -> String {
+    date.format("%F").to_string()
 }
 
 pub fn format_duration(d: Duration) -> String {
