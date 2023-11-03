@@ -1,0 +1,2 @@
+# Time Tracker
+This repository contains a super-basic time-tracker command line application. Note that this is a toy-project to learn rust. Thus, there are several edge-cases that are not covered by the implementation.
