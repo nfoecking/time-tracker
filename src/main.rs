@@ -1,10 +1,11 @@
 use clap::{Parser, Subcommand};
-use commands::{start, init};
+use commands::{start, init, end};
 use repositories::factory;
 
 mod commands;
 mod domain;
 mod repositories;
+mod helper;
 
 #[derive(Debug, Parser)]
 #[command(name = "time-tracker")]
@@ -24,6 +25,8 @@ enum Commands {
     End {
         #[arg(long, short)]
         timestamp: Option<String>,
+        #[arg(long, short)]
+        comment: Option<String>,
     }
 }
 
@@ -32,8 +35,6 @@ fn main() {
     let time_repo = factory::get_time_repository().unwrap();
     let cli = Cli::parse();
 
-    // You can check for the existence of subcommands, and if found use their
-    // matches just as you would the top level cmd
     match &cli.command {
         Commands::Init => {
             init::init_command(time_repo);
@@ -41,8 +42,8 @@ fn main() {
         Commands::Start { timestamp } => {
             start::start_command(time_repo, timestamp);
         },
-        Commands::End { timestamp } => {
-            println!("'myapp start' was used, ts is: {timestamp:?}")
+        Commands::End { timestamp, comment } => {
+            end::end_command(time_repo, timestamp, comment);
         }
     }
 }

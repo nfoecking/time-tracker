@@ -44,7 +44,9 @@ impl TimeRepository for SqliteTimeRepository {
     }
 
     fn get_active_tracking(&self) -> Result<Option<Tracking>, TimeRepositoryError> {
-        let mut stmt = self.connection.prepare("SELECT id, comment, start_ts, end_ts, time_seconds FROM times WHERE end_ts IS NULL")?;
+        let mut stmt = self.connection.prepare(
+            "SELECT id, comment, start_ts, end_ts, time_seconds FROM times WHERE end_ts IS NULL",
+        )?;
         let tracking_iter = stmt.query_map([], |row| {
             Ok(Tracking {
                 id: row.get(0)?,
@@ -55,15 +57,33 @@ impl TimeRepository for SqliteTimeRepository {
             })
         })?;
 
-
         for tracking in tracking_iter {
             match tracking {
                 Ok(t) => return Ok(Some(t)),
-                Err(e) => return Err(e.into())
+                Err(e) => return Err(e.into()),
             };
         }
 
         Ok(None)
+    }
+
+    fn end_tracking(
+        &self,
+        id: u64,
+        ts: &DateTime<Utc>,
+        comment: &Option<String>,
+        time_seconds: u64
+    ) -> Result<(), TimeRepositoryError> {
+        let comment_set = match comment {
+            Some(_) => " comment = ?1, ",
+            None => " "
+        };
+        self.connection.execute(
+            &format!("UPDATE times SET{}end_ts=?2, time_seconds=?4 WHERE id=?3", comment_set),
+            params![comment.as_deref().unwrap_or(""), ts, id, time_seconds],
+        )?;
+
+        Ok(())
     }
 }
 

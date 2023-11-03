@@ -1,6 +1,6 @@
-use chrono::{DateTime, Utc, NaiveDateTime, TimeZone, LocalResult};
+use chrono::Utc;
 
-use crate::domain::repositories::TimeRepository;
+use crate::{domain::repositories::TimeRepository, helper::datetime};
 
 pub fn start_command(time_repository: Box<dyn TimeRepository>, ts: &Option<String>){
     if tracking_is_active(&time_repository) {
@@ -10,7 +10,7 @@ pub fn start_command(time_repository: Box<dyn TimeRepository>, ts: &Option<Strin
 
 
     let dt = match ts {
-        Some(v) => parse_ts(v),
+        Some(v) => datetime::parse_ts(v),
         None => Some(Utc::now())
     };
 
@@ -31,24 +31,5 @@ fn tracking_is_active(time_repository: &Box<dyn TimeRepository>) -> bool {
         Ok(Some(_)) => true,
         Err(_) => true,
         _ => false
-    }
-}
-
-fn parse_ts(date_str: &str) -> Option<DateTime<Utc>>{
-    let naive_dt = NaiveDateTime::parse_from_str(date_str, "%FT%R").ok()?;
-    match Utc.from_local_datetime(&naive_dt) {
-        LocalResult::Single(v) => Some(v),
-        _ => None
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::parse_ts;
-
-    #[test]
-    fn datetime_test() {
-        let result = parse_ts("2023-01-01T07:30");
-        assert!(result.is_some())
     }
 }
