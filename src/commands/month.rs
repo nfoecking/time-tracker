@@ -40,13 +40,16 @@ struct MonthAggTableEntry {
     #[table(title = "date")]
     date: String,
     #[table(title = "time")]
-    time: String
+    time: String,
+    #[table(title = "time (hours)")]
+    time_decimal: String
 }
 
 impl MonthAggTableEntry {
     fn from(agg: &TrackingMonthAggregation) -> Self {
         let time = datetime::format_duration(Duration::seconds(agg.time_seconds as i64));
+        let time_decimal = format!("{:.2}", (agg.time_seconds as f64 / 3600.0));
 
-        return Self { date: datetime::format_date(&agg.date),  time: time }
+        return Self { date: datetime::format_date(&agg.date),  time: time, time_decimal: time_decimal }
     }
 }
